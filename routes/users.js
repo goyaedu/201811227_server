@@ -16,13 +16,18 @@ router.post('/add', function(req, res, next) {
   var database = req.app.get("database");
   var users = database.collection('users');
 
-  users.insert([{ "username" : username, 
-  "password" : password, 
-  "nickname" : nickname, 
-  "socre" : score }], function(err, result) {
+  if (username !== undefined && password !== undefined 
+    && nickname !== undefined && score != undefined) {
+      users.insert([{ "username" : username, 
+      "password" : password, 
+      "nickname" : nickname, 
+      "score" : score }], function(err, result) {
+        res.status(200).send("success");
+      });
 
-  });
+  }
 
+  
 });
 
 module.exports = router;
