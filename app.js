@@ -3,11 +3,24 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongodb = require('mongodb');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+// 몽고DB 연결
+function connectDB() {
+  var databaseUrl = "mongodb://localhost:27017/testdb";
+
+  // DB 연결
+  mongodb.connect(databaseUrl, function(err, database) {
+    if (err) throw err;
+    console.log('DB 연결 완료! : ' + databaseUrl);
+  });
+}
+connectDB();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
