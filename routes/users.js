@@ -17,11 +17,15 @@ router.post('/signin', function(req, res, next) {
   if (username !== undefined && password !== undefined) {
       users.findOne({ username: username }, 
         function(err, result) {
-        if (password === result.password) {
-          res.send('success');
-        } else {
-          res.send('failure');
-        }
+          if (result) {
+            if (password === result.password) {
+              res.send('success');
+            } else {
+              res.send('failure');
+            }
+          } else {
+            res.send('failure');
+          }
       });
   }
 });
