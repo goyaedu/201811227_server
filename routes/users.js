@@ -21,8 +21,7 @@ router.post('/signin', function(req, res, next) {
   var users = database.collection('users');
 
   if (username !== undefined && password !== undefined) {
-      users.findOne({ username: username }, 
-        function(err, result) {
+      users.findOne({ username: username }, function(err, result) {
           if (result) {
             if (password === result.password) {
               res.json({result:ResponseType.SUCCESS});
