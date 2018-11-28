@@ -1,6 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
+var ResponseType = {
+  INVALID_USERNAME: 0,
+  INVALID_PASSWORD: 1,
+  SUCCESS: 2,
+}
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -19,12 +25,12 @@ router.post('/signin', function(req, res, next) {
         function(err, result) {
           if (result) {
             if (password === result.password) {
-              res.send('success');
+              res.json({result:ResponseType.SUCCESS});
             } else {
-              res.send('failure');
+              res.json({result:ResponseType.INVALID_PASSWORD});
             }
           } else {
-            res.send('failure');
+            res.json({result:ResponseType.INVALID_USERNAME});
           }
       });
   }
