@@ -22,15 +22,22 @@ router.post('/signin', function(req, res, next) {
 
   if (username !== undefined && password !== undefined) {
       users.findOne({ username: username }, function(err, result) {
-          if (result) {
-            if (password === result.password) {
-              res.json({result:ResponseType.SUCCESS});
-            } else {
-              res.json({result:ResponseType.INVALID_PASSWORD});
-            }
+        if (result) {
+          if (password === result.password) {
+            res.writeHead(200, {
+              'Set-Cookie':['username=' + result.username + '; Path=/']
+            });
+
+            var ret = JSON.stringify({ result: ResponseType.SUCCESS });
+            res.write(ret);
+            res.end();
+            
           } else {
-            res.json({result:ResponseType.INVALID_USERNAME});
+            res.json({result:ResponseType.INVALID_PASSWORD});
           }
+        } else {
+          res.json({result:ResponseType.INVALID_USERNAME});
+        }
       });
   }
 });
