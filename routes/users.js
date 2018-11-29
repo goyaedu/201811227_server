@@ -14,11 +14,16 @@ router.get('/', function(req, res, next) {
 
 // User Info
 router.get('/info', function(req, res, next) {
-  var cookies = req.cookies;
-  if (cookies.username !== undefined) {
-    res.send('Welcome ' + cookies.username);
+  if (req.session.isAuthenticated) {
+    res.json({
+      username: req.session.username,
+      nickname: req.session.nickname
+    });
   } else {
-    res.send('Who are you?');
+    res.json({
+      username: '',
+      nickname: ''
+    });
   }
 });
 
@@ -34,17 +39,15 @@ router.post('/signin', function(req, res, next) {
       users.findOne({ username: username }, function(err, result) {
         if (result) {
           if (password === result.password) {
-            res.writeHead(200, {
-              'Set-Cookie':['username=' + result.username + '; Path=/']
-            });
-            var ret = JSON.stringify({ result: ResponseType.SUCCESS });
-            res.write(ret);
-            res.end();
+            req.session.isAuthenticated = true;
+            req.session.username = result.username;
+            req.session.nickname = result.nickname;
+            res.json({ result: ResponseType.SUCCESS });
           } else {
-            res.json({result:ResponseType.INVALID_PASSWORD});
+            res.json({ result:ResponseType.INVALID_PASSWORD });
           }
         } else {
-          res.json({result:ResponseType.INVALID_USERNAME});
+          res.json({ result:ResponseType.INVALID_USERNAME });
         }
       });
   }

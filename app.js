@@ -4,11 +4,20 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongodb = require('mongodb');
+var session = require('express-session');
+var fileStore = require('session-file-store')(session);
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+app.use(session({
+  secret: 'session_login',
+  resave: false,
+  saveUninitialized: true,
+  store: new fileStore()
+}))
 
 // 몽고DB 연결
 function connectDB() {
