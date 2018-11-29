@@ -12,6 +12,16 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+// User Info
+router.get('/info', function(req, res, next) {
+  var cookies = req.cookies;
+  if (cookies.username !== undefined) {
+    res.send('Welcome ' + cookies.username);
+  } else {
+    res.send('Who are you?');
+  }
+});
+
 // 로그인
 router.post('/signin', function(req, res, next) {
   var username = req.body.username;
@@ -27,11 +37,9 @@ router.post('/signin', function(req, res, next) {
             res.writeHead(200, {
               'Set-Cookie':['username=' + result.username + '; Path=/']
             });
-
             var ret = JSON.stringify({ result: ResponseType.SUCCESS });
             res.write(ret);
             res.end();
-            
           } else {
             res.json({result:ResponseType.INVALID_PASSWORD});
           }
@@ -61,8 +69,6 @@ router.post('/add', function(req, res, next) {
         res.status(200).send("success");
       });
   }
-
-  
 });
 
 module.exports = router;
