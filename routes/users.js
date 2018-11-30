@@ -1,4 +1,5 @@
 var express = require('express');
+var util = require('../util');
 var router = express.Router();
 
 var ResponseType = {
@@ -72,6 +73,16 @@ router.post('/add', function(req, res, next) {
         res.status(200).send("success");
       });
   }
+});
+
+// Score 추가
+router.post('/addscore/:score', function(req, res, next) {
+
+});
+
+// Score 불러오기
+router.get('/score', function(req, res, next) {
+
 });
 
 module.exports = router;
