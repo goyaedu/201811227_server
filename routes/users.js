@@ -1,5 +1,6 @@
 var express = require('express');
 var util = require('../util');
+const { ObjectId } = require('mongodb'); 
 var router = express.Router();
 
 var ResponseType = {
@@ -34,6 +35,7 @@ router.post('/signin', function(req, res, next) {
         if (result) {
           if (password === result.password) {
             req.session.isAuthenticated = true;
+            req.session.userid = result._id.toString();
             req.session.username = result.username;
             req.session.nickname = result.nickname;
             res.json({ result: ResponseType.SUCCESS });
@@ -72,26 +74,41 @@ router.post('/add', function(req, res, next) {
 router.get('/addscore/:score',  util.isLogined, function(req, res, next) {
 
   var score = req.params.score;
-  var username = req.session.username;
+  var userid = req.session.userid;
 
   var database = req.app.get("database");
   var users = database.collection('users');
 
-  if (username != undefined) {
-    users.update({ username: username }, 
+  if (userid != undefined) {
+    result = users.updateOne({ _id: ObjectId(userid) }, 
       { $set: {
         score: Number(score),
         updatedAt: Date.now()
-      }}, { upsert: true });
-  } 
+      }}, { upsert: true }, function(err) {
+        if (err) {
+          res.status(200).send("failure");
+        }
+        res.status(200).send("success");
+      });
+  }
 });
 
 // Score 불러오기
 router.get('/score', util.isLogined, function(req, res, next) {
+  var userid = req.session.userid;
   var database = req.app.get("database");
   var users = database.collection('users');
 
+  users.findOne({ _id: ObjectId(userid) }, function(err, result) {
+    if (err) throw err;
 
+    var resultObj = {
+      id: result._id.toString(),
+      score: result.score
+    }
+
+    res.json(resultObj);
+  });
 });
 
 module.exports = router;
