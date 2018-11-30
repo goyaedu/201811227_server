@@ -14,18 +14,11 @@ router.get('/', function(req, res, next) {
 });
 
 // User Info
-router.get('/info', function(req, res, next) {
-  if (req.session.isAuthenticated) {
-    res.json({
-      username: req.session.username,
-      nickname: req.session.nickname
-    });
-  } else {
-    res.json({
-      username: '',
-      nickname: ''
-    });
-  }
+router.get('/info', util.isLogined, function(req, res, next) {
+  res.json({
+    username: req.session.username,
+    nickname: req.session.nickname
+  });
 });
 
 // 로그인
@@ -76,12 +69,28 @@ router.post('/add', function(req, res, next) {
 });
 
 // Score 추가
-router.post('/addscore/:score', function(req, res, next) {
+router.get('/addscore/:score',  util.isLogined, function(req, res, next) {
 
+  var score = req.params.score;
+  var username = req.session.username;
+
+  var database = req.app.get("database");
+  var users = database.collection('users');
+
+  if (username != undefined) {
+    users.update({ username: username }, 
+      { $set: {
+        score: Number(score),
+        updatedAt: Date.now()
+      }}, { upsert: true });
+  } 
 });
 
 // Score 불러오기
-router.get('/score', function(req, res, next) {
+router.get('/score', util.isLogined, function(req, res, next) {
+  var database = req.app.get("database");
+  var users = database.collection('users');
+
 
 });
 
