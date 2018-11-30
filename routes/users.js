@@ -2,6 +2,8 @@ var express = require('express');
 var util = require('../util');
 const { ObjectId } = require('mongodb'); 
 var router = express.Router();
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 var ResponseType = {
   INVALID_USERNAME: 0,
@@ -33,7 +35,9 @@ router.post('/signin', function(req, res, next) {
   if (username !== undefined && password !== undefined) {
       users.findOne({ username: username }, function(err, result) {
         if (result) {
-          if (password === result.password) {
+//          if (password === result.password) {
+          var compareResult = bcrypt.compareSync(password, result.password);
+          if (compareResult) {
             req.session.isAuthenticated = true;
             req.session.userid = result._id.toString();
             req.session.username = result.username;
@@ -56,13 +60,16 @@ router.post('/add', function(req, res, next) {
   var nickname = req.body.nickname;
   // var score = req.body.score;
 
+  var salt = bcrypt.genSaltSync(saltRounds);
+  var hash = bcrypt.hashSync(password, salt);
+
   var database = req.app.get("database");
   var users = database.collection('users');
 
   if (username !== undefined && password !== undefined 
     && nickname !== undefined) { //&& score != undefined) {
       users.insert([{ "username" : username, 
-      "password" : password, 
+      "password" : hash, 
       "nickname" : nickname }], function(err, result) {
       // "score" : score }], function(err, result) {
         res.status(200).send("success");
