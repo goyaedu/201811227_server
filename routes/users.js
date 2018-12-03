@@ -68,9 +68,7 @@ router.post('/add', function(req, res, next) {
 
   if (username !== undefined && password !== undefined 
     && nickname !== undefined) {
-      users.insert([{ "username" : username, 
-      "password" : hash, 
-      "nickname" : nickname }], function(err, result) {
+      users.insert([{ "username" : username, "password" : hash, "nickname" : nickname }], function(err, result) {
         res.status(200).send("success");
       });
   }
