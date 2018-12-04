@@ -14,6 +14,7 @@ module.exports = function(server) {
 
         socket.on('message', function(msg) {
             console.dir(msg);
+            socket.broadcast.emit('chat', msg);
         });
     });
 };
