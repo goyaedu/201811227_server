@@ -12,9 +12,8 @@ module.exports = function(server) {
             console.log('Disconnected: ' + socket.id);
         });
 
-        socket.on('hi', function() {
-            console.log('Hi~~');
-            socket.emit('hello');
+        socket.on('message', function(msg) {
+            console.dir(msg);
         });
     });
 };
