@@ -16,6 +16,7 @@ module.exports = function(server) {
             var rId = rooms.shift();
             socket.join(rId, function() {
                 socket.emit('joinRoom', { room: rId });
+                io.to(rId).emit('startGame');
             });
         } else {
             var roomName = uuidv4();
