@@ -44,8 +44,14 @@ module.exports = function(server) {
             });
         });
 
-        socket.on('ackTest', function(data, fn) {
-            fn(data);
+        socket.on('doPlayer', function(playerInfo) {
+
+            var roomId = playerInfo.room;
+            var cellIndex = playerInfo.position;
+
+            socket.broadcast.to(roomId).emit('doOpponent',
+            { position: cellIndex });
+            
         });
 
         socket.on('message', function(msg) {
