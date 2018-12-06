@@ -26,24 +26,26 @@ module.exports = function(server) {
             });
         }
 
-        socket.on('disconnect', function(reson) {
+        socket.on('disconnecting', function(reson) {
             console.log('Disconnected: ' + socket.id);
 
-            var socketRooms = Object.keys(socket.rooms).filter(function(item) {
-                item != socket.id;
-            });
+            var socketRooms = Object.keys(socket.rooms).filter(item => item != socket.id);
             console.dir(socketRooms);
 
             socketRooms.forEach(function(room) {
                 socket.broadcast.to(room).emit('exitRoom');
 
                 // 혼자 만든 방의 유저가 disconnect 되면 해당 방 제거
-                var idx = room.indexOf(room);
+                var idx = rooms.indexOf(room);
                 if (idx != -1)
                 {
                     rooms.splice(idx, 1);
                 }
             });
+        });
+
+        socket.on('ackTest', function(data, fn) {
+            fn(data);
         });
 
         socket.on('message', function(msg) {
